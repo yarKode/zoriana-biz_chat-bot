@@ -1,0 +1,387 @@
+{
+ "dataset": {
+  "size": 373,
+  "intents": {
+   "service": 216,
+   "apply": 31,
+   "human": 29,
+   "urgent": 29,
+   "other": 68
+  },
+  "ukrainian_share_note": "фрази українською і російською, як у відвідувачів сайту"
+ },
+ "model": "TF-IDF (char_wb 2–5 + word 1–2) + LogisticRegression(C=10, class_weight=balanced)",
+ "cv": "5-fold stratified, random_state=42",
+ "intent": {
+  "accuracy": 0.745,
+  "macro_f1": 0.667,
+  "per_class": {
+   "apply": {
+    "precision": 0.821,
+    "recall": 0.742,
+    "f1-score": 0.78,
+    "support": 31.0
+   },
+   "human": {
+    "precision": 0.615,
+    "recall": 0.552,
+    "f1-score": 0.582,
+    "support": 29.0
+   },
+   "other": {
+    "precision": 0.694,
+    "recall": 0.368,
+    "f1-score": 0.481,
+    "support": 68.0
+   },
+   "service": {
+    "precision": 0.765,
+    "recall": 0.903,
+    "f1-score": 0.828,
+    "support": 216.0
+   },
+   "urgent": {
+    "precision": 0.679,
+    "recall": 0.655,
+    "f1-score": 0.667,
+    "support": 29.0
+   }
+  },
+  "labels": [
+   "apply",
+   "human",
+   "other",
+   "service",
+   "urgent"
+  ],
+  "confusion": [
+   [
+    23,
+    2,
+    1,
+    5,
+    0
+   ],
+   [
+    0,
+    16,
+    2,
+    11,
+    0
+   ],
+   [
+    1,
+    3,
+    25,
+    37,
+    2
+   ],
+   [
+    4,
+    5,
+    5,
+    195,
+    7
+   ],
+   [
+    0,
+    0,
+    3,
+    7,
+    19
+   ]
+  ]
+ },
+ "zones": {
+  "HIGH": 0.55,
+  "LOW": 0.35,
+  "high": {
+   "share": 0.681,
+   "accuracy": 0.878
+  },
+  "medium": {
+   "share": 0.217,
+   "accuracy": 0.37
+  },
+  "low": {
+   "share": 0.102,
+   "accuracy": 0.684
+  }
+ },
+ "threshold_table": [
+  {
+   "high": 0.35,
+   "share": 0.898,
+   "accuracy": 0.755
+  },
+  {
+   "high": 0.45,
+   "share": 0.842,
+   "accuracy": 0.79
+  },
+  {
+   "high": 0.55,
+   "share": 0.681,
+   "accuracy": 0.878
+  },
+  {
+   "high": 0.65,
+   "share": 0.552,
+   "accuracy": 0.913
+  },
+  {
+   "high": 0.75,
+   "share": 0.421,
+   "accuracy": 0.936
+  }
+ ],
+ "area": {
+  "accuracy": 0.727,
+  "macro_f1": 0.477,
+  "classes": {
+   "criminal": 23,
+   "business": 19,
+   "civil": 36,
+   "family": 30,
+   "traffic": 18,
+   "state": 18,
+   "-": 229
+  }
+ },
+ "fragment": {
+  "accuracy": 0.928,
+  "macro_f1": 0.72,
+  "classes": {
+   "-": 324,
+   "cost": 22,
+   "online": 12,
+   "guarantee": 7,
+   "address": 8
+  }
+ },
+ "scenario_phrases": [
+  {
+   "ref": "S3",
+   "text": "Здравствуйте, муж подал на развод, нужны алименты на ребёнка",
+   "state": "С1",
+   "intent": "service",
+   "zone": "high",
+   "confidence": 0.859,
+   "area": "family",
+   "fragment": null,
+   "is_question": false
+  },
+  {
+   "ref": "S4",
+   "text": "Потрібна допомога з документами",
+   "state": "С1",
+   "intent": "unknown",
+   "zone": "low",
+   "confidence": 0.388,
+   "area": null,
+   "fragment": null,
+   "is_question": false
+  },
+  {
+   "ref": "S7",
+   "text": "Чи ведете ви справи в Харкові?",
+   "state": "С1",
+   "intent": "service",
+   "zone": "high",
+   "confidence": 0.887,
+   "area": null,
+   "fragment": null,
+   "is_question": true
+  },
+  {
+   "ref": "TC-14",
+   "text": "А скільки коштує?",
+   "state": "С3",
+   "intent": "service",
+   "zone": "high",
+   "confidence": 0.937,
+   "area": null,
+   "fragment": "cost",
+   "is_question": true
+  },
+  {
+   "ref": "TC-17",
+   "text": "зараз іде обшук, потрібен адвокат",
+   "state": "С1",
+   "intent": "urgent",
+   "zone": "high",
+   "confidence": 0.96,
+   "area": null,
+   "fragment": null,
+   "is_question": false
+  },
+  {
+   "ref": "TC-18",
+   "text": "хочу записатися на консультацію",
+   "state": "С1",
+   "intent": "apply",
+   "zone": "high",
+   "confidence": 0.997,
+   "area": null,
+   "fragment": null,
+   "is_question": false
+  },
+  {
+   "ref": "TC-19",
+   "text": "не хочу говорити з ботом, з'єднайте з адвокатом",
+   "state": "С1",
+   "intent": "human",
+   "zone": "high",
+   "confidence": 0.997,
+   "area": null,
+   "fragment": null,
+   "is_question": false
+  }
+ ],
+ "exploratory": [
+  {
+   "text": "у мене проблема з квартирою",
+   "expected_intent": "service",
+   "expected_area": "civil",
+   "before": "urgent, висока 0.62, без напряму",
+   "after": "service, high 0.714, civil",
+   "ok": true,
+   "known_limit": false
+  },
+  {
+   "text": "мене звільнили з роботи",
+   "expected_intent": "service",
+   "expected_area": null,
+   "before": "urgent, висока 0.63",
+   "after": "service, medium 0.499, без напряму",
+   "ok": true,
+   "known_limit": false
+  },
+  {
+   "text": "питання по спадщині",
+   "expected_intent": "service",
+   "expected_area": "civil",
+   "before": "service, висока 0.89, без напряму",
+   "after": "service, high 0.918, civil",
+   "ok": true,
+   "known_limit": false
+  },
+  {
+   "text": "чоловік пішов з дому, що робити з дітьми",
+   "expected_intent": "service",
+   "expected_area": "family",
+   "before": "urgent, середня 0.39",
+   "after": "service, high 0.568, family",
+   "ok": true,
+   "known_limit": false
+  },
+  {
+   "text": "сусід побив мою машину",
+   "expected_intent": "service",
+   "expected_area": null,
+   "before": "service, середня 0.50",
+   "after": "service, high 0.594, без напряму",
+   "ok": true,
+   "known_limit": false
+  },
+  {
+   "text": "потрібно щось робити з боргом",
+   "expected_intent": "service",
+   "expected_area": null,
+   "before": "service, середня 0.37",
+   "after": "service, high 0.683, civil",
+   "ok": true,
+   "known_limit": false
+  },
+  {
+   "text": "отримав повістку до суду",
+   "expected_intent": "service",
+   "expected_area": null,
+   "before": "service, висока 0.84",
+   "after": "service, high 0.851, без напряму",
+   "ok": true,
+   "known_limit": false
+  },
+  {
+   "text": "податкова прийшла з перевіркою",
+   "expected_intent": "service",
+   "expected_area": "state",
+   "before": "service, висока 0.67, без напряму",
+   "after": "service, high 0.77, state",
+   "ok": true,
+   "known_limit": false
+  },
+  {
+   "text": "ми з дружиною розходимося",
+   "expected_intent": "service",
+   "expected_area": "family",
+   "before": "service, висока 0.70, без напряму",
+   "after": "service, high 0.827, family",
+   "ok": true,
+   "known_limit": false
+  },
+  {
+   "text": "колишня не дає бачити сина",
+   "expected_intent": "service",
+   "expected_area": "family",
+   "before": "service, висока 0.81, сімейні",
+   "after": "service, high 0.864, family",
+   "ok": true,
+   "known_limit": false
+  },
+  {
+   "text": "муж не платит на ребенка",
+   "expected_intent": "service",
+   "expected_area": "family",
+   "before": "service, висока 0.88, сімейні",
+   "after": "service, high 0.902, family",
+   "ok": true,
+   "known_limit": false
+  },
+  {
+   "text": "маю питання щодо аліментів",
+   "expected_intent": "service",
+   "expected_area": "family",
+   "before": "service, висока 0.67, сімейні",
+   "after": "service, high 0.669, family",
+   "ok": true,
+   "known_limit": false
+  },
+  {
+   "text": "не знаю, як сформулювати",
+   "expected_intent": "unknown",
+   "expected_area": null,
+   "before": "service, висока 0.69",
+   "after": "unknown, low 0.545, без напряму",
+   "ok": true,
+   "known_limit": false
+  },
+  {
+   "text": "хм, навіть не знаю",
+   "expected_intent": "unknown",
+   "expected_area": null,
+   "before": "service, висока 0.69",
+   "after": "unknown, low 0.807, без напряму",
+   "ok": true,
+   "known_limit": false
+  },
+  {
+   "text": "щось із папірцями",
+   "expected_intent": "unknown",
+   "expected_area": null,
+   "before": "service, висока 0.71",
+   "after": "service, medium 0.5, без напряму",
+   "ok": false,
+   "known_limit": true
+  },
+  {
+   "text": "ааа",
+   "expected_intent": "unknown",
+   "expected_area": null,
+   "before": "service, висока 0.57",
+   "after": "unknown, low 0.0, без напряму",
+   "ok": true,
+   "known_limit": false
+  }
+ ]
+}

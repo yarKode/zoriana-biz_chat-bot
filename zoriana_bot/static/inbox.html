@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Скринька адвоката</title>
+<style>
+  body { margin: 0; padding: 24px 16px; font: 14px/1.45 -apple-system, "Segoe UI", Roboto, Arial, sans-serif; background: #f7f4ee; color: #1d1d1b; }
+  h1 { font-family: Garamond, Georgia, serif; font-weight: 400; color: #2f4f3e; margin: 0 0 4px; }
+  h2 { font-size: 16px; margin: 28px 0 8px; color: #2f4f3e; }
+  p { color: #6b6b66; margin: 0 0 12px; }
+  table { border-collapse: collapse; width: 100%; background: #fff; }
+  th, td { border: 1px solid #dcd8cf; padding: 6px 8px; text-align: left; vertical-align: top; }
+  th { background: #e6eee9; }
+  td.path { font: 12px ui-monospace, Menlo, monospace; }
+</style>
+</head>
+<body>
+<h1>Скринька адвоката</h1>
+<p>Імітація передачі звернення живому оператору: справжнього підключення до адвоката в прототипі немає, звернення зберігаються на сервері (data/handoffs.jsonl). Оновіть сторінку, щоб побачити нові.</p>
+<h2>Передані звернення</h2>
+<table>
+  <tr><th>Час</th><th>Ім’я</th><th>Телефон</th><th>Напрям</th><th>Терміново</th><th>Текст питання</th><th>Шлях діалогу</th></tr>
+  {{rows}}
+</table>
+<h2>Журнал нерозпізнаних фраз (ціль Ц6)</h2>
+<table>
+  <tr><th>Час</th><th>Стан</th><th>Фраза</th></tr>
+  {{unknown}}
+</table>
+</body>
+</html>

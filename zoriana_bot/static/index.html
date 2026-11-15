@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Чат-бот адвоката Зоряни Конончук</title>
+<style>
+  :root {
+    --green: #2f4f3e;
+    --green-light: #e6eee9;
+    --cream: #f7f4ee;
+    --text: #1d1d1b;
+    --muted: #6b6b66;
+    --line: #dcd8cf;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font: 15px/1.45 -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    color: var(--text); background: var(--cream);
+    display: flex; justify-content: center; min-height: 100vh;
+  }
+  .page { width: 100%; max-width: 980px; padding: 24px 16px; display: flex; gap: 24px; align-items: flex-start; }
+  .site { flex: 1; color: var(--muted); }
+  .site h1 { font-family: Garamond, Georgia, serif; font-weight: 400; font-size: 34px; color: var(--green); margin: 8px 0; }
+  .site p { max-width: 420px; }
+  .chat {
+    width: 400px; max-width: 100%; height: 640px; background: #fff; border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0,0,0,.12); display: flex; flex-direction: column; overflow: hidden;
+  }
+  .head { background: var(--green); color: #fff; padding: 14px 16px; display: flex; align-items: center; gap: 10px; }
+  .head .title { flex: 1; }
+  .head b { display: block; font-weight: 600; }
+  .head small { opacity: .8; }
+  .head label { font-size: 12px; opacity: .9; cursor: pointer; user-select: none; }
+  .log { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .msg { max-width: 85%; padding: 9px 12px; border-radius: 14px; white-space: pre-wrap; }
+  .bot { background: var(--green-light); align-self: flex-start; border-bottom-left-radius: 4px; }
+  .user { background: var(--green); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+  .meta {
+    align-self: flex-start; font: 11px/1.4 ui-monospace, Menlo, monospace; color: var(--muted);
+    border-left: 3px solid var(--line); padding: 2px 8px; display: none;
+  }
+  .demo .meta { display: block; }
+  .meta .nlu { color: #6a4c93; }
+  .buttons { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 14px 10px; }
+  .buttons button {
+    border: 1px solid var(--green); color: var(--green); background: #fff; border-radius: 18px;
+    padding: 6px 12px; font: inherit; font-size: 13px; cursor: pointer;
+  }
+  .buttons button:hover { background: var(--green-light); }
+  form { display: flex; border-top: 1px solid var(--line); }
+  form input { flex: 1; border: 0; padding: 14px; font: inherit; outline: none; }
+  form button { border: 0; background: var(--green); color: #fff; padding: 0 18px; font: inherit; cursor: pointer; }
+  .state {
+    display: none; font: 11px ui-monospace, Menlo, monospace; background: rgba(255,255,255,.15);
+    padding: 2px 6px; border-radius: 6px; margin-top: 2px;
+  }
+  .demo .state { display: inline-block; }
+  @media (max-width: 760px) { .site { display: none; } .page { justify-content: center; } .chat { height: calc(100vh - 48px); } }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="site">
+    <h1>Адвокат Зоряна Конончук</h1>
+    <p>Прототип чат-бота для сайту zoriana.biz: кнопки і правила за деревом рішень, класифікатор вільного тексту, передача звернення адвокату.</p>
+    <p><a href="/inbox" target="_blank">Скринька адвоката (передані звернення)</a></p>
+  </div>
+  <div class="chat" id="chat">
+    <div class="head">
+      <div class="title"><b>Помічник адвоката</b><small>відповідає текстами сайту</small><br><span class="state" id="state"></span></div>
+      <label><input type="checkbox" id="demo"> демо</label>
+    </div>
+    <div class="log" id="log"></div>
+    <div class="buttons" id="buttons"></div>
+    <form id="form" autocomplete="off">
+      <input id="input" placeholder="Напишіть повідомлення…">
+      <button type="submit">➤</button>
+    </form>
+  </div>
+</div>
+<script>
+const log = document.getElementById("log");
+const buttons = document.getElementById("buttons");
+const input = document.getElementById("input");
+const chat = document.getElementById("chat");
+const stateBadge = document.getElementById("state");
+let sessionId = null, idleSeconds = 600, idleTimer = null;
+
+const placeholders = { name: "Ваше ім’я…", phone: "Номер телефону, наприклад 067 123 45 67", text: "Напишіть повідомлення…" };
+
+function add(cls, text) {
+  const div = document.createElement("div");
+  div.className = cls;
+  div.textContent = text;
+  log.appendChild(div);
+  log.scrollTop = log.scrollHeight;
+  return div;
+}
+
+function meta(reply) {
+  const parts = reply.trace.map(t => `${t[0] || "·"} → ${t[1]}  (${t[2]})`);
+  const div = add("meta", parts.join("\n"));
+  if (reply.nlu) {
+    const n = reply.nlu, span = document.createElement("div");
+    span.className = "nlu";
+    span.textContent = n.status === "error"
+      ? `С13: помилка – ${n.error}`
+      : `С13: намір=${n.intent_name}, зона=${n.zone}, p=${n.confidence}, напрям=${n.area ?? "–"}, фрагмент=${n.fragment ?? "–"}, питання=${n.is_question}`;
+    div.appendChild(span);
+  }
+}
+
+function render(reply) {
+  sessionId = reply.session_id;
+  meta(reply);
+  reply.messages.forEach(m => add("msg bot", m));
+  buttons.innerHTML = "";
+  reply.buttons.forEach(b => {
+    const btn = document.createElement("button");
+    btn.textContent = b.label;
+    btn.onclick = () => send({ type: "button", id: b.id }, b.label);
+    buttons.appendChild(btn);
+  });
+  input.placeholder = placeholders[reply.input] || placeholders.text;
+  stateBadge.textContent = `${reply.state} ${reply.state_name}`;
+  resetIdle(reply.ended);
+}
+
+async function post(url, body) {
+  const res = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body || {}) });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
+async function send(event, shown) {
+  if (shown) add("msg user", shown);
+  try {
+    render(await post("/api/event", { session_id: sessionId, event }));
+  } catch (e) {
+    add("msg bot", "Немає зв’язку із сервером. Телефон адвоката: +38 (098) 740-15-06");
+  }
+}
+
+function resetIdle(ended) {
+  clearTimeout(idleTimer);
+  if (!ended) idleTimer = setTimeout(() => send({ type: "idle" }), idleSeconds * 1000);
+}
+
+document.getElementById("form").onsubmit = e => {
+  e.preventDefault();
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = "";
+  send({ type: "text", text }, text);
+};
+
+document.getElementById("demo").onchange = e => chat.classList.toggle("demo", e.target.checked);
+if (new URLSearchParams(location.search).has("demo")) {
+  document.getElementById("demo").checked = true;
+  chat.classList.add("demo");
+}
+
+(async () => {
+  idleSeconds = (await (await fetch("/api/config")).json()).idle_seconds;
+  render(await post("/api/start"));
+})();
+</script>
+</body>
+</html>
